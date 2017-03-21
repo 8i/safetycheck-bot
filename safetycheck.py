@@ -60,6 +60,7 @@ def safetycheck():
         channel=request.form['channel_id'],
         text=safety_check_text,
         username="safetybot",
+        link_names=True,
         attachments=[],
     )
     print msg_response
@@ -118,10 +119,14 @@ def create_user_list(c):
 
 
 def worker():
+    import thread
+
     reaction_types = ['reaction_added']
     thread_sc = SlackClient(slack_token)
     if not thread_sc.rtm_connect():
-        raise Exception("Connection Failed, invalid token?")
+        print("Connection Failed, invalid token?")
+        thread.interrupt_main()
+        #raise Exception("Connection Failed, invalid token?")
 
     while True:
         try:
@@ -170,6 +175,13 @@ def worker():
 
 
 if __name__ == "__main__":
+    import sys
+
     t = threading.Thread(target=worker)
-    t.start()
-    app.run(host='0.0.0.0', port=port)
+    try:
+        t.start()
+
+        app.run(host='0.0.0.0', port=port)
+    except KeyboardInterrupt as e:
+        sys.exit(1)
+
