@@ -59,7 +59,7 @@ def safetycheck():
         print("Previous check exists from " + str(check['check_message_ts']))
         print("Current time is " + str(time.time()))
         print("Cool down time time is " + str(check_cool_down))
-        if int(time.time() - check['check_message_ts']) < check_cool_down:
+        if int(time.time() - float(check['check_message_ts'])) < check_cool_down:
             return jsonify({
                 "text": "Safety check already in progress!",
             })
