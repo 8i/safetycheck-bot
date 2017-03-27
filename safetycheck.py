@@ -15,6 +15,8 @@ slash_command_token = os.environ["SC_SLASH_COMMAND_TOKEN"]
 port = int(os.environ.get("SC_PORT", "8080"))
 safety_check_text = "It's time to check in @channel. Please add a slack reaction to mark yourself ok!"
 
+check_cool_down = int(os.environ.get("SC_COOL_DOWN", "3600"))
+
 app = Flask(__name__)
 sc = SlackClient(slack_token)
 
@@ -35,7 +37,6 @@ def safetycheck():
     if 'token' not in request.form or request.form['token'] != slash_command_token:
         return Response('Token incorrect', 401, {})
 
-    # TODO make sure the old safety check is at least a few hours old before overwriting
     users = get_users()
     user_by_username = {user[u'name']: user for user in users}
     user_by_id = {user[u'id']: user for user in users}
@@ -51,6 +52,14 @@ def safetycheck():
         return jsonify({
             "text": "Safetybot is not a member of this channel, add with \\invite @safetybot",
         })
+
+    # Make sure the old safety check is at least an hour old before overwriting
+    if request.form['channel_id'] in checks:
+        check = checks[request.form['channel_id']]
+        if int(time.time() - check['check_message_ts']) < check_cool_down:
+            return jsonify({
+                "text": "Safety check already in progress!",
+            })
 
     # filter channel members that are bots
     members = [m_id for m_id in channel_info[u'channel'][u'members'] if not user_by_id[m_id][u'is_bot']]
