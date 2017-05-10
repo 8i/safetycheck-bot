@@ -134,11 +134,16 @@ def worker():
     import thread
 
     reaction_types = ['reaction_added']
-    thread_sc = SlackClient(slack_token)
-    if not thread_sc.rtm_connect():
-        print("Connection Failed, invalid token?")
-        thread.interrupt_main()
-        #raise Exception("Connection Failed, invalid token?")
+
+    def get_client():
+        thread_sc = SlackClient(slack_token)
+        if not thread_sc.rtm_connect():
+            print("Connection Failed, invalid token?")
+            thread.interrupt_main()
+            #raise Exception("Connection Failed, invalid token?")
+        return thread_sc
+
+    thread_sc = get_client()
 
     while True:
         try:
@@ -182,6 +187,7 @@ def worker():
                 assert chat_update[u'ok']
         except Exception, e:
             print str(e)
+            thread_sc = get_client()
 
         time.sleep(1)
 
