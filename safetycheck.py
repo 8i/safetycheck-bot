@@ -32,6 +32,13 @@ def get_users():
     return users[u'members']
 
 
+@app.route("/health")
+def healthy():
+    return jsonify({
+        "status": "I'm feeling good",
+    })
+
+
 @app.route("/safetycheck", methods=["POST"])
 def safetycheck():
     if 'token' not in request.form or request.form['token'] != slash_command_token:
