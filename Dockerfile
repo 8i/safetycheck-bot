@@ -4,7 +4,7 @@ MAINTAINER Joel Pitt "joel@joelpitt.com"
 RUN apt-get update && \
   apt-get -y dist-upgrade && \
   apt-get clean && \
-  apt-get install -y jq python-dev python-pip build-essential && \
+  apt-get install -y curl jq python-dev python-pip build-essential && \
   rm -rf /var/lib/apt/lists/*
 
 ENV AWS_DEFAULT_REGION=us-west-2
