@@ -13,7 +13,7 @@ slash_command_token = os.environ["SC_SLASH_COMMAND_TOKEN"]
 
 
 port = int(os.environ.get("SC_PORT", "8080"))
-safety_check_text = "It's time to check in @channel. Please add a slack reaction to mark yourself ok!"
+safety_check_text = "It's time to check in !channel. Please add a slack reaction to mark yourself ok!"
 
 check_cool_down = int(os.environ.get("SC_COOL_DOWN", "3600"))
 
