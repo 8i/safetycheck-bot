@@ -29,7 +29,7 @@ def get_users():
     )
 
     assert users['ok']
-    return users[u'members']
+    return [member for member in users[u'members'] if not member[u'deleted']]
 
 
 @app.route("/health")
@@ -209,4 +209,3 @@ if __name__ == "__main__":
         app.run(host='0.0.0.0', port=port)
     except KeyboardInterrupt as e:
         sys.exit(1)
-
